@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  BrowserMultiFormatReader,
-  type IScannerControls
-} from "@zxing/browser";
+import QrScanner from "qr-scanner";
 
 export function useQrScanner(
   active: boolean,
@@ -23,33 +20,32 @@ export function useQrScanner(
     if (!active || !videoElement) return;
 
     let cancelled = false;
-    let controls: IScannerControls | undefined;
-    const reader = new BrowserMultiFormatReader();
+    const scanner: QrScanner = new QrScanner(
+      videoElement,
+      (result) => {
+        if (cancelled) return;
+
+        if (onScanRef.current(result.data)) {
+          cancelled = true;
+          scanner.stop();
+        }
+      },
+      {
+        preferredCamera: "environment",
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
+        // onDecodeError: (error) => setError(error),
+        returnDetailedScanResult: true
+      }
+    );
 
     setError("");
     setStarting(true);
 
-    reader
-      .decodeFromVideoDevice(
-        undefined,
-        videoElement,
-        (result, _error, callbackControls) => {
-          if (cancelled) {
-            callbackControls.stop();
-            return;
-          }
-          if (!result) return;
-
-          if (onScanRef.current(result.getText())) {
-            cancelled = true;
-            callbackControls.stop();
-          }
-        }
-      )
-      .then((result) => {
-        controls = result;
-        if (cancelled) result.stop();
-        else setStarting(false);
+    scanner
+      .start()
+      .then(() => {
+        if (!cancelled) setStarting(false);
       })
       .catch(() => {
         if (!cancelled) {
@@ -62,7 +58,7 @@ export function useQrScanner(
 
     return () => {
       cancelled = true;
-      controls?.stop();
+      scanner.destroy();
     };
   }, [active, videoElement]);
 

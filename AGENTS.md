@@ -10,7 +10,7 @@ This is a proof of concept for demonstration only and is not recommended for pro
 - React 19 + TypeScript + Vite
 - Mantine for focused UI primitives; Lucide React icons
 - `otplib` for TOTP generation and secret validation
-- `@zxing/browser` for camera QR scanning
+- `qr-scanner` for camera QR scanning
 - `localStorage` for persistence
 
 ## TOTP contract
