@@ -4,9 +4,9 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "dev": "bun --hot src/index.ts",
+    "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
+    "start": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
     "@mantine/core": "^9.7.5",
@@ -18,11 +18,9 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "oxc-transform-react": "^0.157.0",
+    "@types/bun": "latest",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.2.1",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.6"
+    "typescript": "~7.0.2"
   }
 }
