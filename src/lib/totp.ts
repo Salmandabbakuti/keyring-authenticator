@@ -20,7 +20,6 @@ export function isValidSecret(value: string) {
 }
 
 export function generateCode(secret: string, counter: number) {
-  console.log("Generating code with secret:", secret, "and counter:", counter);
   return generateSync({ secret, epoch: counter * 30, guardrails });
 }
 
@@ -58,11 +57,9 @@ export function parseTotpUri(value: string): AccountDraft {
   }
 
   const separator = uriLabel.indexOf(":");
-  const labelIssuer =
-    separator < 0 ? "" : uriLabel.slice(0, separator).trim();
-  const label = (separator < 0
-    ? uriLabel
-    : uriLabel.slice(separator + 1)
+  const labelIssuer = separator < 0 ? "" : uriLabel.slice(0, separator).trim();
+  const label = (
+    separator < 0 ? uriLabel : uriLabel.slice(separator + 1)
   ).trim();
   const issuer = (
     uri.searchParams.get("issuer") ||
