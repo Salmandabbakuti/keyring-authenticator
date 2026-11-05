@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  BrowserMultiFormatReader,
-  type IScannerControls
-} from "@zxing/browser";
+import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser";
 
 export function useQrScanner(
   active: boolean,
@@ -24,7 +21,7 @@ export function useQrScanner(
 
     let cancelled = false;
     let controls: IScannerControls | undefined;
-    const reader = new BrowserMultiFormatReader();
+    const reader = new BrowserQRCodeReader();
 
     setError("");
     setStarting(true);
