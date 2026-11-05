@@ -1,12 +1,8 @@
-import index from "../src/index.html";
-
-const server = Bun.serve({
+Bun.serve({
   routes: {
-    // Serve index.html for all unmatched routes.
-    "/*": index,
     "/health": () => Response.json({ status: "ok" })
   },
-
+  fetch: (req) => new Response("Not Found", { status: 404 }),
   development: process.env.NODE_ENV !== "production" && {
     // Enable browser hot reloading in development
     hmr: true,
@@ -14,5 +10,3 @@ const server = Bun.serve({
     console: true
   }
 });
-
-console.log(`🚀 Server running at ${server.url}`);
