@@ -2,9 +2,36 @@
 
 :root {
   font-family: 'DM Sans', sans-serif;
-  color: #202124;
-  background: #f7f8fa;
+  color: var(--app-text);
+  background: var(--app-bg);
+  --app-bg: #f7f8fa;
+  --app-surface: #fff;
+  --app-input: #f6f8f7;
+  --app-border: #e9ebef;
+  --app-text: #202124;
+  --app-muted: #89918f;
+  --app-local-bg: #edf5f1;
+  --app-local-border: #dcece4;
+  --app-local-text: #16856d;
+  --app-empty-border: #d9dfe0;
+  --app-empty-bg: #ffffff8c;
+  --app-progress-bg: #edf0f1;
   font-synthesis: none
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --app-bg: #141a19;
+  --app-surface: #1c2422;
+  --app-input: #252f2c;
+  --app-border: #303b37;
+  --app-text: #e8eeeb;
+  --app-muted: #a5b0ab;
+  --app-local-bg: #203b33;
+  --app-local-border: #315548;
+  --app-local-text: #75d6b7;
+  --app-empty-border: #394641;
+  --app-empty-bg: #1c2422cc;
+  --app-progress-bg: #394641;
 }
 
 * {
@@ -14,13 +41,14 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #f7f8fa
+  color: var(--app-text);
+  background: var(--app-bg)
 }
 
 .header {
   height: 64px;
-  background: #fff;
-  border-bottom: 1px solid #e9ebef;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--app-border);
   position: sticky;
   top: 0;
   z-index: 5
@@ -28,51 +56,57 @@ body {
 
 .header-inner {
   height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 340px) auto;
+  align-items: center;
+  gap: 12px
+}
+
+.app-brand {
   display: flex;
   align-items: center;
-  justify-content: space-between
+  gap: 7px;
+  flex: 0 0 auto
 }
 
 .app-title {
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -.4px;
-  color: #202124
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px
+  color: var(--app-text)
 }
 
 .header-search {
-  width: min(280px, 42vw)
+  width: 100%;
+  min-width: 0;
+  justify-self: end
 }
 
 .header-search input {
-  background: #f6f8f7;
-  border-color: transparent
+  height: 42px;
+  background: var(--app-surface);
+  border-color: var(--app-border)
 }
 
-.local {
+.brand-icon {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  color: #16856d;
-  background: #edf5f1;
-  border: 1px solid #dcece4;
-  border-radius: 50%
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  color: var(--app-local-text);
+  background: var(--app-local-bg);
+  border: 1px solid var(--app-local-border);
+  border-radius: 9px
+}
+
+.theme-switcher {
+  justify-self: end
 }
 
 .main {
   padding-top: 28px;
   padding-bottom: 150px
-}
-
-.search {
-  display: none
 }
 
 .grid {
@@ -82,13 +116,13 @@ body {
 }
 
 .card {
-  border-color: #e8eaee !important;
-  background: #fff;
+  border-color: var(--app-border) !important;
+  background: var(--app-surface);
   transition: box-shadow .18s, transform .18s
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px #1a27230f;
+  box-shadow: 0 8px 24px #0000001f;
   transform: translateY(-1px)
 }
 
@@ -135,7 +169,7 @@ body {
 
 .timer .mantine-Progress-root {
   flex: 1;
-  background: #edf0f1
+  background: var(--app-progress-bg)
 }
 
 .empty {
@@ -146,9 +180,9 @@ body {
   justify-content: center;
   text-align: center;
   gap: 7px;
-  border: 1px dashed #d9dfe0;
+  border: 1px dashed var(--app-empty-border);
   border-radius: 14px;
-  background: #ffffff8c;
+  background: var(--app-empty-bg);
   padding: 28px
 }
 
@@ -161,7 +195,7 @@ body {
 
 footer {
   margin-top: 28px;
-  color: #89918f;
+  color: var(--app-muted);
   font-size: 11px;
   text-align: center
 }
@@ -174,8 +208,8 @@ footer {
   line-height: 1.4;
   margin: 0;
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: #f7f8fa;
-  border-top: 1px solid #e9ebef;
+  background: var(--app-bg);
+  border-top: 1px solid var(--app-border);
 }
 
 footer span {
@@ -225,16 +259,6 @@ footer span {
     grid-template-columns: 1fr
   }
 
-  .local {
-    font-size: 0;
-    gap: 0;
-    padding: 8px
-  }
-
-  .local svg {
-    width: 16px;
-    height: 16px
-  }
 }
 
 .add-fab {
@@ -254,21 +278,26 @@ footer span {
     height: 58px
   }
 
+  .header-inner {
+    display: flex;
+    gap: 8px
+  }
+
+  .app-brand {
+    gap: 4px
+  }
+
   .app-title {
-    font-size: 18px
+    font-size: 16px
   }
 
   .header-search {
-    width: min(190px, 48vw)
+    flex: 1;
+    width: auto
   }
 
   .header-search input {
     font-size: 13px
-  }
-
-  .local {
-    width: 32px;
-    height: 32px
   }
 
   .add-fab {
@@ -291,8 +320,8 @@ footer span {
 .issuer-mark {
   display: grid;
   place-items: center;
-  background: #edf5f1;
-  color: #16856d
+  background: var(--app-local-bg);
+  color: var(--app-local-text)
 }
 
 .delete-content {

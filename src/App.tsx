@@ -5,8 +5,7 @@ import {
   Container,
   Modal,
   Popover,
-  Text,
-  TextInput
+  Text
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
@@ -14,13 +13,12 @@ import {
   KeyRound,
   Plus,
   ScanLine,
-  Search,
-  ShieldCheck,
   Trash2,
   XIcon
 } from "lucide-react";
 import { AccountCard } from "./components/AccountCard";
 import { AccountDialog } from "./components/AccountDialog";
+import { useSiteSearchQuery } from "./components/SiteLayout";
 import { useAccounts } from "./hooks/useAccounts";
 import { useClock } from "./hooks/useClock";
 import type {
@@ -31,7 +29,7 @@ import type {
 
 export default function App() {
   const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
-  const [query, setQuery] = useState("");
+  const { query } = useSiteSearchQuery();
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Account | null>(null);
@@ -81,60 +79,36 @@ export default function App() {
 
   return (
     <>
-      <header className="header">
-        <Container size="md" className="header-inner">
-          <div className="app-title">Authenticator</div>
-          <div className="header-actions">
-            <TextInput
-              className="header-search"
-              placeholder="Search"
-              leftSection={<Search size={17} />}
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <span className="local" title="Accounts are stored on this device">
-              <ShieldCheck size={14} />
-            </span>
+      <Container size="md" className="main">
+        {filtered.length ? (
+          <div className="grid">
+            {filtered.map((account) => (
+              <AccountCard
+                key={account.id}
+                account={account}
+                counter={counter}
+                secondsRemaining={secondsRemaining}
+                onEdit={(item) => setDialog({ type: "edit", account: item })}
+                onDelete={setPendingDelete}
+              />
+            ))}
           </div>
-        </Container>
-      </header>
-
-      <main>
-        <Container size="md" className="main">
-          {filtered.length ? (
-            <div className="grid">
-              {filtered.map((account) => (
-                <AccountCard
-                  key={account.id}
-                  account={account}
-                  counter={counter}
-                  secondsRemaining={secondsRemaining}
-                  onEdit={(item) => setDialog({ type: "edit", account: item })}
-                  onDelete={setPendingDelete}
-                />
-              ))}
+        ) : (
+          <div className="empty">
+            <div className="empty-icon">
+              <KeyRound size={25} />
             </div>
-          ) : (
-            <div className="empty">
-              <div className="empty-icon">
-                <KeyRound size={25} />
-              </div>
-              <Text fw={600}>
-                {query ? "No matching accounts" : "No accounts yet"}
-              </Text>
-              <Text size="sm" c="dimmed">
-                {query
-                  ? "Try another search."
-                  : "Scan a QR code or enter an account secret to get started."}
-              </Text>
-            </div>
-          )}
-          <footer className="app-footer">
-            Codes refresh every 30 seconds <span>·</span> Demo only — not
-            intended for production use
-          </footer>
-        </Container>
-      </main>
+            <Text fw={600}>
+              {query ? "No matching accounts" : "No accounts yet"}
+            </Text>
+            <Text size="sm" c="dimmed">
+              {query
+                ? "Try another search."
+                : "Scan a QR code or enter an account secret to get started."}
+            </Text>
+          </div>
+        )}
+      </Container>
 
       <Popover
         opened={addMenuOpen}
@@ -167,7 +141,6 @@ export default function App() {
             fullWidth
             justify="flex-start"
             variant="subtle"
-            color="dark"
             leftSection={<ScanLine size={17} />}
             onClick={() => {
               setAddMenuOpen(false);
@@ -180,7 +153,6 @@ export default function App() {
             fullWidth
             justify="flex-start"
             variant="subtle"
-            color="dark"
             leftSection={<Keyboard size={17} />}
             onClick={() => {
               setAddMenuOpen(false);

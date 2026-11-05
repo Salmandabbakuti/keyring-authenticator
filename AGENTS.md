@@ -44,6 +44,7 @@ Secrets are stored in plaintext in localStorage. This demonstration does not pro
 - `src/hooks/useQrScanner.ts`: camera lifecycle and cancellation.
 - `src/components/AccountCard.tsx`: account display and copy action.
 - `src/components/AccountDialog.tsx`: manual add/edit and QR scanner UI.
+- `src/components/SiteLayout.tsx`: shared header, content, and footer layout.
 - `src/App.tsx`: composition and app-level flows.
 
 ## Conventions
