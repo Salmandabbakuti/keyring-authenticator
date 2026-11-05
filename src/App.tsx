@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { AccountCard } from "./components/AccountCard";
 import { AccountDialog } from "./components/AccountDialog";
-import { useSiteSearchQuery } from "./components/SiteLayout";
 import { useAccounts } from "./hooks/useAccounts";
 import { useClock } from "./hooks/useClock";
 import type {
@@ -27,9 +26,12 @@ import type {
   AccountDialog as DialogState
 } from "./types";
 
-export default function App() {
+interface AppProps {
+  searchQuery: string;
+}
+
+export default function App({ searchQuery }: AppProps) {
   const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
-  const { query } = useSiteSearchQuery();
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Account | null>(null);
@@ -40,7 +42,7 @@ export default function App() {
   const filtered = accounts.filter((account) =>
     `${account.issuer} ${account.label}`
       .toLowerCase()
-      .includes(query.trim().toLowerCase())
+      .includes(searchQuery.trim().toLowerCase())
   );
 
   function saveAccount(draft: AccountDraft, id?: string) {
@@ -99,10 +101,10 @@ export default function App() {
               <KeyRound size={25} />
             </div>
             <Text fw={600}>
-              {query ? "No matching accounts" : "No accounts yet"}
+              {searchQuery ? "No matching accounts" : "No accounts yet"}
             </Text>
             <Text size="sm" c="dimmed">
-              {query
+              {searchQuery
                 ? "Try another search."
                 : "Scan a QR code or enter an account secret to get started."}
             </Text>

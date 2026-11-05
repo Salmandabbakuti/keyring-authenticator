@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
   ActionIcon,
   Container,
@@ -7,31 +7,17 @@ import {
   useMantineColorScheme
 } from "@mantine/core";
 import { Moon, Search, ShieldCheck, Sun } from "lucide-react";
+import App from "../App";
 
-interface SiteLayoutProps {
-  children: ReactNode;
-}
-
-const SearchQueryContext = createContext<
-  { query: string; setQuery: (query: string) => void } | undefined
->(undefined);
-
-export function useSiteSearchQuery() {
-  const context = useContext(SearchQueryContext);
-  if (!context) {
-    throw new Error("useSiteSearchQuery must be used within SiteLayout");
-  }
-  return context;
-}
-
-export function SiteLayout({ children }: SiteLayoutProps) {
-  const [query, setQuery] = useState("");
+export function SiteLayout() {
+  const [searchQuery, setSearchQuery] = useState("");
   const { setColorScheme } = useMantineColorScheme();
+
   const computedColorScheme = useComputedColorScheme("light");
   const nextColorScheme = computedColorScheme === "dark" ? "light" : "dark";
 
   return (
-    <SearchQueryContext.Provider value={{ query, setQuery }}>
+    <>
       <header className="header">
         <Container size="md" className="header-inner">
           <div className="app-brand">
@@ -45,8 +31,8 @@ export function SiteLayout({ children }: SiteLayoutProps) {
             placeholder="Search"
             aria-label="Search accounts"
             leftSection={<Search size={17} />}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
           />
           <ActionIcon
             className="theme-switcher"
@@ -65,11 +51,13 @@ export function SiteLayout({ children }: SiteLayoutProps) {
           </ActionIcon>
         </Container>
       </header>
-      <main>{children}</main>
+      <main>
+        <App searchQuery={searchQuery} />
+      </main>
       <footer className="app-footer">
         Codes refresh every 30 seconds <span>·</span> Demo only — not intended
         for production use
       </footer>
-    </SearchQueryContext.Provider>
+    </>
   );
 }
