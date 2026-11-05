@@ -95,7 +95,7 @@ export default function AccountDialog({
       centered
       radius="lg"
     >
-      <Tabs defaultValue={initialTab}>
+      <Tabs defaultValue={initialTab} keepMounted={false}>
         <Tabs.List mb="md">
           <Tabs.Tab value="manual" leftSection={<Keyboard size={15} />}>
             Enter manually

@@ -62,10 +62,11 @@ export default function App({ searchQuery }: AppProps) {
       <Popover
         opened={addMenuOpen}
         onChange={setAddMenuOpen}
-        position="top-start"
+        position="top-end"
         shadow="md"
         radius="lg"
         width={220}
+        floatingStrategy="fixed"
       >
         <Popover.Target>
           <ActionIcon

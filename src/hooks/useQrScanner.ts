@@ -18,7 +18,6 @@ export function useQrScanner(
 
   useEffect(() => {
     if (!active || !videoElement) return;
-
     let cancelled = false;
     const scanner: QrScanner = new QrScanner(
       videoElement,
