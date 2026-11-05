@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ActionIcon, Button, Container, Popover, Text } from "@mantine/core";
 import { Keyboard, KeyRound, Plus, ScanLine, XIcon } from "lucide-react";
-import { AccountCard } from "@/components/AccountCard";
-import { AccountDialog } from "@/components/AccountDialog";
+import AccountCard from "@/components/AccountCard";
+import AccountDialog from "@/components/AccountDialog";
 import { useAccounts } from "@/hooks/useAccounts";
 import { useClock } from "@/hooks/useClock";
 
@@ -11,7 +11,7 @@ interface AppProps {
 }
 
 export default function App({ searchQuery }: AppProps) {
-  const { accounts } = useAccounts();
+  const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [dialog, setDialog] = useState<"manual" | "scan" | null>(null);
   const now = useClock();
@@ -35,6 +35,10 @@ export default function App({ searchQuery }: AppProps) {
                 account={account}
                 counter={counter}
                 secondsRemaining={secondsRemaining}
+                accounts={accounts}
+                addAccount={addAccount}
+                updateAccount={updateAccount}
+                deleteAccount={deleteAccount}
               />
             ))}
           </div>
@@ -107,7 +111,10 @@ export default function App({ searchQuery }: AppProps) {
       <AccountDialog
         opened={dialog !== null}
         account={null}
+        accounts={accounts}
         initialTab={dialog ?? "manual"}
+        addAccount={addAccount}
+        updateAccount={updateAccount}
         onClose={() => setDialog(null)}
       />
     </>

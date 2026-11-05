@@ -12,18 +12,28 @@ import { useMemo, useState } from "react";
 import { Check, Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { notifications } from "@mantine/notifications";
 import { generateCode } from "@/lib/totp";
-import type { Account } from "@/types";
-import { useAccounts } from "@/hooks/useAccounts";
-import { AccountDialog } from "@/components/AccountDialog";
+import type { Account, AccountDraft } from "@/types";
+import AccountDialog from "@/components/AccountDialog";
 
 type Props = {
   account: Account;
   counter: number;
   secondsRemaining: number;
+  accounts: Account[];
+  addAccount: (draft: AccountDraft) => Account;
+  updateAccount: (account: Account) => void;
+  deleteAccount: (id: string) => void;
 };
 
-export function AccountCard({ account, counter, secondsRemaining }: Props) {
-  const { deleteAccount } = useAccounts();
+export default function AccountCard({
+  account,
+  counter,
+  secondsRemaining,
+  accounts,
+  addAccount,
+  updateAccount,
+  deleteAccount
+}: Props) {
   const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const code = useMemo(
@@ -104,6 +114,9 @@ export function AccountCard({ account, counter, secondsRemaining }: Props) {
       <AccountDialog
         opened={editing}
         account={account}
+        accounts={accounts}
+        addAccount={addAccount}
+        updateAccount={updateAccount}
         onClose={() => setEditing(false)}
       />
       <Modal
