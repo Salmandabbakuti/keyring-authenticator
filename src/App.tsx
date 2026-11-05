@@ -142,6 +142,11 @@ export default function App() {
         shadow="md"
         radius="lg"
         width={220}
+        floatingStrategy="fixed"
+        middlewares={{
+          flip: { padding: 16 },
+          shift: { padding: 16 }
+        }}
       >
         <Popover.Target>
           <ActionIcon
