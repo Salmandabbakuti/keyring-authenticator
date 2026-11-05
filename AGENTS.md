@@ -3,6 +3,7 @@
 ## Purpose
 
 A small, browser-only TOTP authenticator. Secrets remain on the device; there is no backend, account system, API, sync, or analytics.
+This is a proof of concept for demonstration only and is not recommended for production use.
 
 ## Stack
 
@@ -32,7 +33,7 @@ A small, browser-only TOTP authenticator. Secrets remain on the device; there is
 
 `Account = { id, issuer, label, secret }`.
 Storage key: `keyring.accounts.v1`.
-Secrets are stored in plaintext in localStorage. This is a demo/MVP trade-off, not secure secret storage against XSS or other same-origin script access.
+Secrets are stored in plaintext in localStorage. This demonstration does not provide secure secret storage against XSS or other same-origin script access and is not suitable for production use.
 
 ## Structure
 

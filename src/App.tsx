@@ -129,8 +129,9 @@ export default function App() {
               </Text>
             </div>
           )}
-          <footer>
-            Codes refresh every 30 seconds <span>·</span> TOTP standard
+          <footer className="app-footer">
+            Codes refresh every 30 seconds <span>·</span> Demo only — not
+            intended for production use
           </footer>
         </Container>
       </main>
