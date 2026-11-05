@@ -4,15 +4,7 @@ const server = Bun.serve({
   routes: {
     // Serve index.html for all unmatched routes.
     "/*": index,
-
-    "/api/hello": {
-      async GET(req) {
-        return Response.json({
-          message: "Hello, world!",
-          method: "GET"
-        });
-      }
-    }
+    "/health": () => Response.json({ status: "ok" })
   },
 
   development: process.env.NODE_ENV !== "production" && {
