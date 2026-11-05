@@ -3,7 +3,7 @@ import QrScanner from "qr-scanner";
 
 export function useQrScanner(
   active: boolean,
-  onScan: (value: string) => boolean
+  onQrData: (data: string) => boolean
 ) {
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
     null
@@ -11,8 +11,8 @@ export function useQrScanner(
   const videoRef = (element: HTMLVideoElement | null) => {
     setVideoElement(element);
   };
-  const onScanRef = useRef(onScan);
-  onScanRef.current = onScan;
+  const onQrDataRef = useRef(onQrData);
+  onQrDataRef.current = onQrData;
   const [error, setError] = useState("");
   const [starting, setStarting] = useState(false);
 
@@ -24,8 +24,8 @@ export function useQrScanner(
       videoElement,
       (result) => {
         if (cancelled) return;
-
-        if (onScanRef.current(result.data)) {
+        const isScanned = onQrDataRef.current(result.data);
+        if (isScanned) {
           cancelled = true;
           scanner.stop();
         }

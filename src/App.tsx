@@ -1,40 +1,19 @@
 import { useState } from "react";
-import {
-  ActionIcon,
-  Button,
-  Container,
-  Modal,
-  Popover,
-  Text
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import {
-  Keyboard,
-  KeyRound,
-  Plus,
-  ScanLine,
-  Trash2,
-  XIcon
-} from "lucide-react";
-import { AccountCard } from "./components/AccountCard";
-import { AccountDialog } from "./components/AccountDialog";
-import { useAccounts } from "./hooks/useAccounts";
-import { useClock } from "./hooks/useClock";
-import type {
-  Account,
-  AccountDraft,
-  AccountDialog as DialogState
-} from "./types";
+import { ActionIcon, Button, Container, Popover, Text } from "@mantine/core";
+import { Keyboard, KeyRound, Plus, ScanLine, XIcon } from "lucide-react";
+import { AccountCard } from "@/components/AccountCard";
+import { AccountDialog } from "@/components/AccountDialog";
+import { useAccounts } from "@/hooks/useAccounts";
+import { useClock } from "@/hooks/useClock";
 
 interface AppProps {
   searchQuery: string;
 }
 
 export default function App({ searchQuery }: AppProps) {
-  const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
+  const { accounts } = useAccounts();
   const [addMenuOpen, setAddMenuOpen] = useState(false);
-  const [dialog, setDialog] = useState<DialogState | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<Account | null>(null);
+  const [dialog, setDialog] = useState<"manual" | "scan" | null>(null);
   const now = useClock();
   const counter = Math.floor(now / 30_000);
   const secondsRemaining = 30 - (Math.floor(now / 1000) % 30);
@@ -44,40 +23,6 @@ export default function App({ searchQuery }: AppProps) {
       .toLowerCase()
       .includes(searchQuery.trim().toLowerCase())
   );
-
-  function saveAccount(draft: AccountDraft, id?: string) {
-    if (id) updateAccount({ ...draft, id });
-    else addAccount(draft);
-    setDialog(null);
-    notifications.show({
-      message: id ? "Account updated" : "Account added",
-      color: "teal"
-    });
-  }
-
-  function addScannedAccount(draft: AccountDraft) {
-    const duplicate = accounts.some(
-      (account) => account.secret === draft.secret
-    );
-    if (duplicate) {
-      notifications.show({
-        message: "This account is already in your authenticator.",
-        color: "yellow"
-      });
-      setDialog(null);
-      return;
-    }
-    addAccount(draft);
-    setDialog(null);
-    notifications.show({ message: `${draft.issuer} added`, color: "teal" });
-  }
-
-  function removeAccount() {
-    if (!pendingDelete) return;
-    deleteAccount(pendingDelete.id);
-    setPendingDelete(null);
-    notifications.show({ message: "Account deleted", color: "teal" });
-  }
 
   return (
     <>
@@ -90,8 +35,6 @@ export default function App({ searchQuery }: AppProps) {
                 account={account}
                 counter={counter}
                 secondsRemaining={secondsRemaining}
-                onEdit={(item) => setDialog({ type: "edit", account: item })}
-                onDelete={setPendingDelete}
               />
             ))}
           </div>
@@ -115,15 +58,10 @@ export default function App({ searchQuery }: AppProps) {
       <Popover
         opened={addMenuOpen}
         onChange={setAddMenuOpen}
-        position="top-end"
+        position="top-start"
         shadow="md"
         radius="lg"
         width={220}
-        floatingStrategy="fixed"
-        middlewares={{
-          flip: { padding: 16 },
-          shift: { padding: 16 }
-        }}
       >
         <Popover.Target>
           <ActionIcon
@@ -146,7 +84,7 @@ export default function App({ searchQuery }: AppProps) {
             leftSection={<ScanLine size={17} />}
             onClick={() => {
               setAddMenuOpen(false);
-              setDialog({ type: "add", mode: "scan" });
+              setDialog("scan");
             }}
           >
             Scan a QR code
@@ -158,7 +96,7 @@ export default function App({ searchQuery }: AppProps) {
             leftSection={<Keyboard size={17} />}
             onClick={() => {
               setAddMenuOpen(false);
-              setDialog({ type: "add", mode: "manual" });
+              setDialog("manual");
             }}
           >
             Enter a setup key
@@ -168,40 +106,10 @@ export default function App({ searchQuery }: AppProps) {
 
       <AccountDialog
         opened={dialog !== null}
-        account={dialog?.type === "edit" ? dialog.account : null}
-        initialTab={dialog?.type === "add" ? dialog.mode : "manual"}
+        account={null}
+        initialTab={dialog ?? "manual"}
         onClose={() => setDialog(null)}
-        onSave={saveAccount}
-        onScanned={addScannedAccount}
       />
-
-      <Modal
-        opened={pendingDelete !== null}
-        onClose={() => setPendingDelete(null)}
-        title="Delete account?"
-        centered
-        size="sm"
-        radius="lg"
-      >
-        <div className="delete-content">
-          <Text size="sm" c="dimmed">
-            This removes {pendingDelete?.issuer} – {pendingDelete?.label} and
-            its secret from this browser.
-          </Text>
-          <div className="delete-actions">
-            <Button variant="default" onClick={() => setPendingDelete(null)}>
-              Cancel
-            </Button>
-            <Button
-              color="red"
-              leftSection={<Trash2 size={15} />}
-              onClick={removeAccount}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </>
   );
 }
