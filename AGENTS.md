@@ -1,0 +1,61 @@
+# Keyring — project guide
+
+## Purpose
+
+A small, browser-only TOTP authenticator. Secrets remain on the device; there is no backend, account system, API, sync, or analytics.
+
+## Stack
+
+- React 19 + TypeScript + Vite
+- Mantine for focused UI primitives; Lucide React icons
+- `otplib` for TOTP generation and secret validation
+- `@zxing/browser` for camera QR scanning
+- `localStorage` for persistence
+
+## TOTP contract
+
+- Defaults: SHA1, 6 digits, 30-second period.
+- Provisioning URIs with other algorithm/digits/period settings are rejected explicitly.
+- Do not silently generate a code using defaults when the QR specifies different settings.
+- Normalize Base32 secrets by removing spaces, hyphens, and trailing padding.
+
+## UX
+
+- Compact Authenticator header, searchable account list, floating + action.
+- - menu offers QR scanning or manual setup.
+- A valid scanned TOTP QR adds the account immediately; no confirmation form.
+- Manual setup and editing use the account dialog.
+- Duplicate scanned secrets are rejected with a notification.
+- Deletion requires confirmation.
+
+## Data
+
+`Account = { id, issuer, label, secret }`.
+Storage key: `keyring.accounts.v1`.
+Secrets are stored in plaintext in localStorage. This is a demo/MVP trade-off, not secure secret storage against XSS or other same-origin script access.
+
+## Structure
+
+- `src/lib/totp.ts`: secret normalization, validation, code generation, provisioning URI parsing.
+- `src/lib/storage.ts`: localStorage read/write and stored-data validation.
+- `src/hooks/useAccounts.ts`: account state and CRUD.
+- `src/hooks/useClock.ts`: shared one-second clock tick.
+- `src/hooks/useQrScanner.ts`: camera lifecycle and cancellation.
+- `src/components/AccountCard.tsx`: account display and copy action.
+- `src/components/AccountDialog.tsx`: manual add/edit and QR scanner UI.
+- `src/App.tsx`: composition and app-level flows.
+
+## Conventions
+
+- Keep components and hooks small; avoid generic abstractions and unnecessary state libraries.
+- Keep account data separate from transient UI state.
+- Derive countdown and codes from the clock; regenerate codes only when the 30-second counter changes.
+- Clean up intervals and camera streams.
+- Do not log or transmit secrets.
+- Camera access requires HTTPS except on localhost.
+
+## Commands
+
+- `bun install`
+- `bun run dev`
+- `bun run build`

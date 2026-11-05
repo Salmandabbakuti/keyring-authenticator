@@ -1,0 +1,28 @@
+{
+  "name": "keyring-authenticator",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mantine/core": "^9.7.5",
+    "@mantine/notifications": "^9.7.5",
+    "@zxing/browser": "^0.2.1",
+    "lucide-react": "^1.69.0",
+    "otplib": "^13.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "oxc-transform-react": "^0.157.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6"
+  }
+}
