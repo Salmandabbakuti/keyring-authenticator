@@ -15,5 +15,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
+  "paths": {
+    "@/*": ["./src/*"]
+  },
   "include": ["src"]
 }

@@ -1,22 +1,17 @@
-import type { Account } from "../types";
-import { isValidSecret, normalizeSecret } from "./totp";
+import type { Account } from "@/types";
+import { isValidSecret, normalizeSecret } from "@/lib/totp";
 
 const STORAGE_KEY = "keyring.accounts.v1";
 
-type StoredAccount = Record<string, string>;
-
-function isAccount(value: unknown): value is StoredAccount {
+function isAccount(value: Account): boolean {
   if (!value || typeof value !== "object") return false;
 
-  const item = value as StoredAccount;
-  const label = item.label ?? item.account;
-
   return (
-    typeof item.id === "string" &&
-    typeof item.issuer === "string" &&
-    typeof label === "string" &&
-    typeof item.secret === "string" &&
-    isValidSecret(item.secret)
+    typeof value.id === "string" &&
+    typeof value.issuer === "string" &&
+    typeof value.label === "string" &&
+    typeof value.secret === "string" &&
+    isValidSecret(value.secret)
   );
 }
 
@@ -27,9 +22,7 @@ export function loadAccounts(): Account[] {
     );
     if (!Array.isArray(stored)) return [];
     return stored.filter(isAccount).map((item) => ({
-      id: item.id,
-      issuer: item.issuer,
-      label: item.label,
+      ...item,
       secret: normalizeSecret(item.secret)
     }));
   } catch {

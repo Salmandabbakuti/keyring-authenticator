@@ -3,7 +3,7 @@ import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser";
 
 export function useQrScanner(
   active: boolean,
-  onScan: (value: string) => boolean
+  onQrData: (data: string) => boolean
 ) {
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
     null
@@ -11,18 +11,16 @@ export function useQrScanner(
   const videoRef = (element: HTMLVideoElement | null) => {
     setVideoElement(element);
   };
-  const onScanRef = useRef(onScan);
-  onScanRef.current = onScan;
+  const onQrDataRef = useRef(onQrData);
+  onQrDataRef.current = onQrData;
   const [error, setError] = useState("");
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     if (!active || !videoElement) return;
-
     let cancelled = false;
     let controls: IScannerControls | undefined;
     const reader = new BrowserQRCodeReader();
-
     setError("");
     setStarting(true);
 
@@ -36,8 +34,8 @@ export function useQrScanner(
             return;
           }
           if (!result) return;
-
-          if (onScanRef.current(result.getText())) {
+          const isScanned = onQrDataRef.current(result.getText());
+          if (isScanned) {
             cancelled = true;
             callbackControls.stop();
           }

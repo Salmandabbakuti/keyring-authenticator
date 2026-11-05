@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Account, AccountDraft } from "../types";
-import { loadAccounts, persistAccounts } from "../lib/storage";
+import type { Account, AccountDraft } from "@/types";
+import { loadAccounts, persistAccounts } from "@/lib/storage";
 
 export function useAccounts() {
   const [accounts, setAccounts] = useState<Account[]>(loadAccounts);

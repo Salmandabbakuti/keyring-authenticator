@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Button,
@@ -9,53 +9,46 @@ import {
   TextInput
 } from "@mantine/core";
 import { Keyboard, ScanLine } from "lucide-react";
-import type { Account, AccountDraft } from "../types";
-import { normalizeSecret, parseTotpUri, isValidSecret } from "../lib/totp";
-import { useQrScanner } from "../hooks/useQrScanner";
+import type { Account, AccountDraft } from "@/types";
+import { normalizeSecret, parseTotpUri, isValidSecret } from "@/lib/totp";
+import { useQrScanner } from "@/hooks/useQrScanner";
+import { notifications } from "@mantine/notifications";
 
 type Props = {
   opened: boolean;
   account: Account | null;
+  accounts: Account[];
+  addAccount: (draft: AccountDraft) => Account;
+  updateAccount: (account: Account) => void;
   onClose: () => void;
-  onSave: (draft: AccountDraft, id?: string) => void;
-  onScanned: (draft: AccountDraft) => void;
   initialTab?: "manual" | "scan";
 };
 
-export function AccountDialog({
+export default function AccountDialog({
   opened,
   account,
+  accounts,
+  addAccount,
+  updateAccount,
   onClose,
-  onSave,
-  onScanned,
   initialTab = "manual"
 }: Props) {
-  const initialValues: AccountDraft = {
-    issuer: "",
-    label: "",
-    secret: ""
-  };
-  const [tab, setTab] = useState("manual");
   const [error, setError] = useState("");
-  const [values, setValues] = useState<AccountDraft>(initialValues);
 
-  useEffect(() => {
-    if (!opened) return;
-    setTab(account ? "manual" : initialTab);
-    setError("");
-    setValues(() => {
-      if (!account) return initialValues;
-      return {
-        issuer: account.issuer,
-        label: account.label,
-        secret: account.secret
-      };
-    });
-  }, [opened, account]);
-
-  const handleScan = (value: string) => {
+  const handleScannedQrData = (data: string) => {
     try {
-      onScanned(parseTotpUri(value));
+      const draft = parseTotpUri(data);
+      if (accounts.some((item) => item.secret === draft.secret)) {
+        notifications.show({
+          message: "This account is already in your authenticator.",
+          color: "yellow"
+        });
+        onClose();
+        return true;
+      }
+      addAccount(draft);
+      notifications.show({ message: `${draft.issuer} added`, color: "teal" });
+      onClose();
       return true;
     } catch (cause) {
       setError(
@@ -66,14 +59,16 @@ export function AccountDialog({
   };
 
   const scanner = useQrScanner(
-    opened && !account && tab === "scan",
-    handleScan
+    opened && !account && initialTab === "scan",
+    handleScannedQrData
   );
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const values = Object.fromEntries(formData.entries()) as AccountDraft;
+
     const draft = {
-      ...values,
       issuer: values.issuer.trim(),
       label: values.label.trim(),
       secret: normalizeSecret(values.secret)
@@ -82,7 +77,14 @@ export function AccountDialog({
       setError("Enter an issuer, label, and valid Base32 secret.");
       return;
     }
-    onSave(draft, account?.id);
+    if (account) {
+      updateAccount({ ...draft, id: account.id });
+      notifications.show({ message: "Account updated", color: "teal" });
+    } else {
+      addAccount(draft);
+      notifications.show({ message: "Account added", color: "teal" });
+    }
+    onClose();
   }
 
   return (
@@ -93,13 +95,7 @@ export function AccountDialog({
       centered
       radius="lg"
     >
-      <Tabs
-        value={tab}
-        onChange={(value) => {
-          setTab(value || "manual");
-          setError("");
-        }}
-      >
+      <Tabs defaultValue={initialTab} keepMounted={false}>
         <Tabs.List mb="md">
           <Tabs.Tab value="manual" leftSection={<Keyboard size={15} />}>
             Enter manually
@@ -111,45 +107,27 @@ export function AccountDialog({
           )}
         </Tabs.List>
         <Tabs.Panel value="manual">
-          <form onSubmit={submit}>
+          <form onSubmit={handleSubmit}>
             <Stack gap="sm">
               <TextInput
+                name="issuer"
                 label="Issuer"
                 placeholder="Google"
-                value={values.issuer}
-                onChange={(event) => {
-                  const issuer = event.target.value;
-                  setValues((v) => ({
-                    ...v,
-                    issuer
-                  }));
-                }}
+                defaultValue={account?.issuer}
                 required
               />
               <TextInput
+                name="label"
                 label="Label"
                 placeholder="you@example.com"
-                value={values.label}
-                onChange={(event) => {
-                  const label = event.target.value;
-                  setValues((v) => ({
-                    ...v,
-                    label
-                  }));
-                }}
+                defaultValue={account?.label}
                 required
               />
               <TextInput
+                name="secret"
                 label="Secret key"
                 placeholder="BASE32 SECRET"
-                value={values.secret}
-                onChange={(event) => {
-                  const secret = event.target.value;
-                  setValues((v) => ({
-                    ...v,
-                    secret
-                  }));
-                }}
+                defaultValue={account?.secret}
                 autoComplete="off"
                 required
               />

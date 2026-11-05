@@ -1,33 +1,43 @@
 import {
   ActionIcon,
+  Button,
   Menu,
+  Modal,
   Paper,
   Progress,
   Text,
   CopyButton
 } from "@mantine/core";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Check, Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { generateCode } from "../lib/totp";
-import type { Account } from "../types";
+import { notifications } from "@mantine/notifications";
+import { generateCode } from "@/lib/totp";
+import type { Account, AccountDraft } from "@/types";
+import AccountDialog from "@/components/AccountDialog";
 
 type Props = {
   account: Account;
   counter: number;
   secondsRemaining: number;
-  onEdit: (account: Account) => void;
-  onDelete: (account: Account) => void;
+  accounts: Account[];
+  addAccount: (draft: AccountDraft) => Account;
+  updateAccount: (account: Account) => void;
+  deleteAccount: (id: string) => void;
 };
 
-export function AccountCard({
+export default function AccountCard({
   account,
   counter,
   secondsRemaining,
-  onEdit,
-  onDelete
+  accounts,
+  addAccount,
+  updateAccount,
+  deleteAccount
 }: Props) {
+  const [editing, setEditing] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const code = useMemo(
-    () => generateCode(account.secret, counter),
+    () => generateCode(account.secret),
     [account.secret, counter]
   );
 
@@ -58,14 +68,14 @@ export function AccountCard({
           <Menu.Dropdown>
             <Menu.Item
               leftSection={<Pencil size={15} />}
-              onClick={() => onEdit(account)}
+              onClick={() => setEditing(true)}
             >
               Edit
             </Menu.Item>
             <Menu.Item
               color="red"
               leftSection={<Trash2 size={15} />}
-              onClick={() => onDelete(account)}
+              onClick={() => setConfirmingDelete(true)}
             >
               Delete
             </Menu.Item>
@@ -101,6 +111,43 @@ export function AccountCard({
           {secondsRemaining}s
         </Text>
       </div>
+      <AccountDialog
+        opened={editing}
+        account={account}
+        accounts={accounts}
+        addAccount={addAccount}
+        updateAccount={updateAccount}
+        onClose={() => setEditing(false)}
+      />
+      <Modal
+        opened={confirmingDelete}
+        onClose={() => setConfirmingDelete(false)}
+        title="Delete account?"
+        centered
+        size="sm"
+        radius="lg"
+      >
+        <Text size="sm" c="dimmed">
+          This removes {account.issuer} – {account.label} and its secret from
+          this browser.
+        </Text>
+        <div className="delete-actions">
+          <Button variant="default" onClick={() => setConfirmingDelete(false)}>
+            Cancel
+          </Button>
+          <Button
+            color="red"
+            leftSection={<Trash2 size={15} />}
+            onClick={() => {
+              deleteAccount(account.id);
+              setConfirmingDelete(false);
+              notifications.show({ message: "Account deleted", color: "teal" });
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      </Modal>
     </Paper>
   );
 }
