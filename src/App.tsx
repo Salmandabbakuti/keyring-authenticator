@@ -11,13 +11,14 @@ interface AppProps {
 }
 
 export default function App({ searchQuery }: AppProps) {
-  const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [dialog, setDialog] = useState<"manual" | "scan" | null>(null);
+
+  const { accounts } = useAccounts();
   const now = useClock();
+
   const counter = Math.floor(now / 30_000);
   const secondsRemaining = 30 - (Math.floor(now / 1000) % 30);
-
   const filtered = accounts.filter((account) =>
     `${account.issuer} ${account.label}`
       .toLowerCase()
@@ -35,10 +36,6 @@ export default function App({ searchQuery }: AppProps) {
                 account={account}
                 counter={counter}
                 secondsRemaining={secondsRemaining}
-                accounts={accounts}
-                addAccount={addAccount}
-                updateAccount={updateAccount}
-                deleteAccount={deleteAccount}
               />
             ))}
           </div>
@@ -112,10 +109,7 @@ export default function App({ searchQuery }: AppProps) {
       <AccountDialog
         opened={dialog !== null}
         account={null}
-        accounts={accounts}
         initialTab={dialog ?? "manual"}
-        addAccount={addAccount}
-        updateAccount={updateAccount}
         onClose={() => setDialog(null)}
       />
     </>
