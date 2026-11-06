@@ -19,8 +19,8 @@ export function isValidSecret(value: string) {
   }
 }
 
-export function generateCode(secret: string) {
-  return generateSync({ secret, guardrails });
+export function generateCode(secret: string, counter: number) {
+  return generateSync({ secret, guardrails, epoch: counter * 30 });
 }
 
 export function parseTotpUri(value: string): AccountDraft {
