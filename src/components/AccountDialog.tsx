@@ -49,6 +49,7 @@ export default function AccountDialog({
         return true;
       }
       addAccount(draft);
+      if (typeof navigator.vibrate === "function") navigator.vibrate(100);
       notifications.show({ message: `${draft.issuer} added`, color: "teal" });
       onClose();
       return true;
