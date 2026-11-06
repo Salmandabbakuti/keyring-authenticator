@@ -1,3 +1,16 @@
 {
-  "bunVersion": "1.4.x"
+  "bunVersion": "1.4.x",
+  "routes": [
+    {
+      "src": "^/api/server/(.*)$",
+      "dest": "/api/server",
+      "transforms": [
+        {
+          "type": "request.path",
+          "op": "set",
+          "args": "/$1"
+        }
+      ]
+    }
+  ]
 }
