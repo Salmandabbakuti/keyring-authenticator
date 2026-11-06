@@ -7,7 +7,7 @@ import {
   useMantineColorScheme
 } from "@mantine/core";
 import { Moon, Search, ShieldCheck, Sun } from "lucide-react";
-import App from "../App";
+import App from "@/App";
 
 export default function SiteLayout() {
   const [searchQuery, setSearchQuery] = useState("");

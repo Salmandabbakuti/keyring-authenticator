@@ -1,5 +1,5 @@
 import { createGuardrails, generateSync } from "otplib";
-import type { AccountDraft } from "../types";
+import type { AccountDraft } from "@/types";
 
 const guardrails = createGuardrails({ MIN_SECRET_BYTES: 10 });
 
@@ -20,7 +20,7 @@ export function isValidSecret(value: string) {
 }
 
 export function generateCode(secret: string, counter: number) {
-  return generateSync({ secret, epoch: counter * 30, guardrails });
+  return generateSync({ secret, guardrails, epoch: counter * 30 });
 }
 
 export function parseTotpUri(value: string): AccountDraft {
