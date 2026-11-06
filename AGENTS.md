@@ -19,11 +19,12 @@ This is a proof of concept for demonstration only and is not recommended for pro
 - Provisioning URIs with other algorithm/digits/period settings are rejected explicitly.
 - Do not silently generate a code using defaults when the QR specifies different settings.
 - Normalize Base32 secrets by removing spaces, hyphens, and trailing padding.
+- Pass the shared clock's counter to code generation as an explicit `epoch` in seconds; codes and countdowns must derive from the same clock snapshot.
 
 ## UX
 
 - Compact Authenticator header, searchable account list, floating + action.
-- - menu offers QR scanning or manual setup.
+- The + menu offers QR scanning or manual setup.
 - A valid scanned TOTP QR adds the account immediately; no confirmation form.
 - Manual setup and editing use the account dialog.
 - Duplicate scanned secrets are rejected with a notification.
@@ -39,7 +40,8 @@ Secrets are stored in plaintext in localStorage. This demonstration does not pro
 
 - `src/lib/totp.ts`: secret normalization, validation, code generation, provisioning URI parsing.
 - `src/lib/storage.ts`: localStorage read/write and stored-data validation.
-- `src/hooks/useAccounts.ts`: account state and CRUD.
+- `src/components/AccountsProvider.tsx`: account state, CRUD, and persistence provider.
+- `src/hooks/useAccounts.ts`: access to account state and CRUD from components.
 - `src/hooks/useClock.ts`: shared one-second clock tick.
 - `src/hooks/useQrScanner.ts`: camera lifecycle and cancellation.
 - `src/components/AccountCard.tsx`: account display and copy action.

@@ -33,7 +33,7 @@ export default function AccountCard({
   const { deleteAccount } = useAccounts();
 
   const code = useMemo(
-    () => generateCode(account.secret),
+    () => generateCode(account.secret, counter),
     [account.secret, counter]
   );
 
