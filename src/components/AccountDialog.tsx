@@ -12,14 +12,12 @@ import { Keyboard, ScanLine } from "lucide-react";
 import type { Account, AccountDraft } from "@/types";
 import { normalizeSecret, parseTotpUri, isValidSecret } from "@/lib/totp";
 import { useQrScanner } from "@/hooks/useQrScanner";
+import { useAccounts } from "@/hooks/useAccounts";
 import { notifications } from "@mantine/notifications";
 
 type Props = {
   opened: boolean;
   account: Account | null;
-  accounts: Account[];
-  addAccount: (draft: AccountDraft) => Account;
-  updateAccount: (account: Account) => void;
   onClose: () => void;
   initialTab?: "manual" | "scan";
 };
@@ -27,14 +25,13 @@ type Props = {
 export default function AccountDialog({
   opened,
   account,
-  accounts,
-  addAccount,
-  updateAccount,
   onClose,
   initialTab = "manual"
 }: Props) {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState(initialTab);
+
+  const { accounts, addAccount, updateAccount } = useAccounts();
 
   useEffect(() => {
     if (opened) setActiveTab(initialTab);

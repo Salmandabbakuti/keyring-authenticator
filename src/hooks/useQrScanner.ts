@@ -8,13 +8,15 @@ export function useQrScanner(
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
     null
   );
+  const [error, setError] = useState("");
+  const [starting, setStarting] = useState(false);
+
   const videoRef = (element: HTMLVideoElement | null) => {
     setVideoElement(element);
   };
+
   const onQrDataRef = useRef(onQrData);
   onQrDataRef.current = onQrData;
-  const [error, setError] = useState("");
-  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     if (!active || !videoElement) return;
