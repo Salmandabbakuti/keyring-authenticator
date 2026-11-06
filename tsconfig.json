@@ -13,10 +13,11 @@
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "paths": {
-    "@/*": ["./src/*"]
-  },
+
   "include": ["src"]
 }
