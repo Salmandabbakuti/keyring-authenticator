@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Alert,
   Button,
@@ -34,6 +34,11 @@ export default function AccountDialog({
   initialTab = "manual"
 }: Props) {
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (opened) setActiveTab(initialTab);
+  }, [opened, initialTab]);
 
   const handleScannedQrData = (data: string) => {
     try {
@@ -59,7 +64,7 @@ export default function AccountDialog({
   };
 
   const scanner = useQrScanner(
-    opened && !account && initialTab === "scan",
+    opened && !account && activeTab === "scan",
     handleScannedQrData
   );
 
@@ -95,7 +100,10 @@ export default function AccountDialog({
       centered
       radius="lg"
     >
-      <Tabs defaultValue={initialTab} keepMounted={false}>
+      <Tabs
+        value={activeTab}
+        onChange={(val) => setActiveTab(val === "scan" ? "scan" : "manual")}
+      >
         <Tabs.List mb="md">
           <Tabs.Tab value="manual" leftSection={<Keyboard size={15} />}>
             Enter manually
