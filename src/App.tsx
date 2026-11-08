@@ -17,8 +17,10 @@ export default function App({ searchQuery }: AppProps) {
   const { accounts } = useAccounts();
   const now = useClock();
 
-  const counter = Math.floor(now / 30_000);
-  const secondsRemaining = 30 - (Math.floor(now / 1000) % 30);
+  const secondsSinceEpoch = Math.floor(now / 1000);
+  const secondsRemaining = 30 - (secondsSinceEpoch % 30);
+  const counter = Math.floor(secondsSinceEpoch / 30); // Reuses the totalSeconds work
+
   const filtered = accounts.filter((account) =>
     `${account.issuer} ${account.label}`
       .toLowerCase()
