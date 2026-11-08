@@ -6,7 +6,8 @@ import {
   Stack,
   Tabs,
   Text,
-  TextInput
+  TextInput,
+  PasswordInput
 } from "@mantine/core";
 import { Keyboard, ScanLine } from "lucide-react";
 import type { Account, AccountDraft } from "@/types";
@@ -129,7 +130,7 @@ export default function AccountDialog({
                 defaultValue={account?.label}
                 required
               />
-              <TextInput
+              <PasswordInput
                 name="secret"
                 label="Secret key"
                 placeholder="BASE32 SECRET"
