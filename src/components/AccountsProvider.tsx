@@ -15,11 +15,11 @@ export function AccountsProvider({ children }: { children: ReactNode }) {
   const [accounts, setAccounts] = useState<Account[]>(loadAccounts);
 
   useEffect(() => {
-    if (!persistAccounts(accounts)) {
+    const isPersisted = persistAccounts(accounts);
+    if (!isPersisted)
       console.error(
         "Unable to persist authenticator accounts to localStorage."
       );
-    }
   }, [accounts]);
 
   function addAccount(draft: AccountDraft) {

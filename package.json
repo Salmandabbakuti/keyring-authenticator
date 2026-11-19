@@ -1,7 +1,7 @@
 {
   "name": "keyring-authenticator",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "dev": "bun --hot src/index.ts",
@@ -9,9 +9,9 @@
     "start": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
-    "@mantine/core": "^9.7.5",
-    "@mantine/notifications": "^9.7.5",
-    "lucide-react": "^1.69.0",
+    "@mantine/core": "^9.8.1",
+    "@mantine/notifications": "^9.8.1",
+    "lucide-react": "^1.75.0",
     "otplib": "^13.6.0",
     "qr-scanner": "^1.4.2",
     "react": "^19.3.1",
