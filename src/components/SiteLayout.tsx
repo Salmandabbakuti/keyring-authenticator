@@ -3,7 +3,6 @@ import {
   ActionIcon,
   Container,
   TextInput,
-  useComputedColorScheme,
   useMantineColorScheme
 } from "@mantine/core";
 import { Moon, Search, ShieldCheck, Sun } from "lucide-react";
@@ -11,10 +10,8 @@ import App from "@/App";
 
 export default function SiteLayout() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { setColorScheme } = useMantineColorScheme();
-
-  const computedColorScheme = useComputedColorScheme("light");
-  const nextColorScheme = computedColorScheme === "dark" ? "light" : "dark";
+  const { toggleColorScheme, colorScheme } = useMantineColorScheme();
+  const nextColorScheme = colorScheme === "dark" ? "light" : "dark";
 
   return (
     <>
@@ -41,13 +38,9 @@ export default function SiteLayout() {
             radius="xl"
             aria-label={`Switch to ${nextColorScheme} mode`}
             title={`Switch to ${nextColorScheme} mode`}
-            onClick={() => setColorScheme(nextColorScheme)}
+            onClick={toggleColorScheme}
           >
-            {computedColorScheme === "dark" ? (
-              <Sun size={17} />
-            ) : (
-              <Moon size={17} />
-            )}
+            {colorScheme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
           </ActionIcon>
         </Container>
       </header>

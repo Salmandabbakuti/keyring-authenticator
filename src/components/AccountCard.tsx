@@ -121,7 +121,7 @@ export default function AccountCard({
         radius="lg"
       >
         <Text size="sm" c="dimmed">
-          This removes {account.issuer} – {account.label} and its secret from
+          This removes "{account.issuer}:{account.label}" and its secret from
           this browser.
         </Text>
         <div className="delete-actions">

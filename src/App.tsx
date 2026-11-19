@@ -1,6 +1,19 @@
 import { useState } from "react";
-import { ActionIcon, Button, Container, Popover, Text } from "@mantine/core";
-import { Keyboard, KeyRound, Plus, ScanLine, XIcon } from "lucide-react";
+import {
+  ActionIcon,
+  Button,
+  Container,
+  Popover,
+  EmptyState
+} from "@mantine/core";
+import {
+  Keyboard,
+  KeyRound,
+  Plus,
+  ScanLine,
+  XIcon,
+  TextSearch
+} from "lucide-react";
 import AccountCard from "@/components/AccountCard";
 import AccountDialog from "@/components/AccountDialog";
 import { useAccounts } from "@/hooks/useAccounts";
@@ -10,6 +23,8 @@ interface AppProps {
   searchQuery: string;
 }
 
+const WINDOW_MS = 30_000; // 30 seconds default
+
 export default function App({ searchQuery }: AppProps) {
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [dialog, setDialog] = useState<"manual" | "scan" | null>(null);
@@ -17,9 +32,9 @@ export default function App({ searchQuery }: AppProps) {
   const { accounts } = useAccounts();
   const now = useClock();
 
-  const secondsSinceEpoch = Math.floor(now / 1000);
-  const secondsRemaining = 30 - (secondsSinceEpoch % 30);
-  const counter = Math.floor(secondsSinceEpoch / 30); // Reuses the totalSeconds work
+  const msRemaining = WINDOW_MS - (now % WINDOW_MS);
+  const counter = Math.floor(now / WINDOW_MS);
+  const secondsRemaining = Math.ceil(msRemaining / 1000);
 
   const filtered = accounts.filter((account) =>
     `${account.issuer} ${account.label}`
@@ -43,17 +58,15 @@ export default function App({ searchQuery }: AppProps) {
           </div>
         ) : (
           <div className="empty">
-            <div className="empty-icon">
-              <KeyRound size={25} />
-            </div>
-            <Text fw={600}>
-              {searchQuery ? "No matching accounts" : "No accounts yet"}
-            </Text>
-            <Text size="sm" c="dimmed">
-              {searchQuery
-                ? "Try another search."
-                : "Scan a QR code or enter an account secret to get started."}
-            </Text>
+            <EmptyState
+              icon={searchQuery ? <TextSearch /> : <KeyRound />}
+              title={searchQuery ? "No matching accounts" : "No accounts yet"}
+              description={
+                searchQuery
+                  ? "We couldn't find anything matching your search. Try another search."
+                  : "Scan a QR code or enter setup key to get started."
+              }
+            />
           </div>
         )}
       </Container>
